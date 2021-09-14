@@ -113,7 +113,7 @@ jobs:
           cd crashpad-examples
           mv ../target ./
           export RUSTFLAGS="-C link-args=-Wl,--build-id"
-          cargo build
+          cargo build --locked
       - name: Run Examples
         env:
           MINIDUMP_UPLOAD_URL: ${{ secrets.MINIDUMP_UPLOAD_URL }}
