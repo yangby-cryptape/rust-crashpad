@@ -20,6 +20,8 @@ where
 
 /// Starts a Crashpad handler process, performing any necessary handshake to configure it.
 ///
+/// This function is a wrapper of `crashpad::CrashpadClient::StartHandler()`.
+///
 /// Parameters:
 /// - `handler_opt`: The path to a Crashpad handler executable.
 ///   If this parameter is not provided, the function will try to find the default handler in `PATH`.
@@ -31,9 +33,6 @@ where
 ///   The handler will be started with this URL as its `--url` argument.
 ///
 /// Returns: true on success, false on failure.
-///
-/// Ref:
-/// - [`crashpad::CrashpadClient::StartHandler()`](https://crashpad.chromium.org/doxygen/classcrashpad_1_1.html#a810ad9941bedba543bf60507c31c55da)
 pub fn start_crashpad(
     handler_opt: Option<PathBuf>,
     data_dir_opt: Option<PathBuf>,

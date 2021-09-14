@@ -16,6 +16,8 @@ pub const fn handler_name() -> &'static str {
 }
 
 /// The data of a precompiled Crashpad handler executable binary.
+///
+/// *This data is available only if this crate is built with the `"with-precompiled"` feature.*
 #[cfg(not(feature = "with-precompiled"))]
 pub const fn precompiled_handler() -> Option<&'static [u8]> {
     None
