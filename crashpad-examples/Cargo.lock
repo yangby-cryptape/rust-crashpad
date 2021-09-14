@@ -130,7 +130,7 @@ dependencies = [
 
 [[package]]
 name = "crashpad"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "crashpad-sys",
  "libc",
@@ -142,14 +142,14 @@ dependencies = [
 
 [[package]]
 name = "crashpad-examples"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "crashpad",
 ]
 
 [[package]]
 name = "crashpad-sys"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bindgen",
  "cc",
