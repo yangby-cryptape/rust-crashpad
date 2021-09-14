@@ -119,17 +119,16 @@ pub fn start_crashpad(
                             #[cfg(not(unix))]
                             {
                                 permissions.set_readonly(true);
-                                file.set_permissions(permissions).map_err(|err| {
-                                    let errmsg = format!(
-                                        "failed to set permissions of \
-                                         the temporary file `{}` since {}",
-                                        bin_file.display(),
-                                        err
-                                    );
-                                    Error::Handler(errmsg)
-                                })?;
                             }
-                            Ok(())
+                            file.set_permissions(permissions).map_err(|err| {
+                                let errmsg = format!(
+                                    "failed to set permissions of \
+                                     the temporary file `{}` since {}",
+                                    bin_file.display(),
+                                    err
+                                );
+                                Error::Handler(errmsg)
+                            })
                         })?;
                     Ok(bin_file)
                 } else {

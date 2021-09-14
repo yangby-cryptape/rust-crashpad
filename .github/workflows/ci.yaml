@@ -115,7 +115,6 @@ jobs:
           export RUSTFLAGS="-C link-args=-Wl,--build-id"
           cargo build
       - name: Run Examples
-        if: runner.os == 'Windows'
         env:
           MINIDUMP_UPLOAD_URL: ${{ secrets.MINIDUMP_UPLOAD_URL }}
           OS_TYPE: ${{ runner.os }}
