@@ -1,6 +1,6 @@
 [package]
 name = "crashpad"
-version = "0.1.0-alpha.0"
+version = "0.1.0"
 authors = ["Boyu Yang <yangby@cryptape.com>"]
 edition = "2018"
 description = "Rust wrapper for Crashpad."
@@ -13,7 +13,7 @@ readme = "README.md"
 include = ["src/**/*.rs", "README.md", "LICENSE"]
 
 [dependencies]
-crashpad-sys = { version = "0.1.0-alpha.0", path = "../crashpad-sys" }
+crashpad-sys = { version = "0.1.0", path = "../crashpad-sys" }
 log = "0.4.14"
 thiserror = "1.0.29"
 which = "4.2.2"

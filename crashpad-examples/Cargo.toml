@@ -1,6 +1,6 @@
 [package]
 name = "crashpad-examples"
-version = "0.1.0-alpha.0"
+version = "0.1.0"
 authors = ["Boyu Yang <yangby@cryptape.com>"]
 edition = "2018"
 description = "Examples of Crashpad."
@@ -8,7 +8,7 @@ homepage = "https://github.com/yangby-cryptape/rust-crashpad"
 repository = "https://github.com/yangby-cryptape/rust-crashpad"
 
 [dependencies]
-crashpad = { version = "0.1.0-alpha.0", path = "../crashpad", features = ["with-precompiled"] }
+crashpad = { version = "0.1.0", path = "../crashpad", features = ["with-precompiled"] }
 
 [workspace]
 members = ["."]
