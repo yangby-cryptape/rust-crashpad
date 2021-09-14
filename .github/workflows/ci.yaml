@@ -1,0 +1,136 @@
+name: CI
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+defaults:
+  run:
+    shell: bash
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+  RUST_BACKTRACE: full
+  RUST_TOOLCHAIN: 1.55.0
+jobs:
+  rustfmt:
+    name: Checks / Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          override: true
+          components: rustfmt
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+  clippy:
+    name: Checks / Clippy
+    needs: [ rustfmt ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          override: true
+          components: clippy
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: -- --deny warnings
+  cargo-deny:
+    name: Checks / Deny
+    needs: [ rustfmt ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Generate Cache Key
+        id: cache-key
+        run: echo "::set-output name=yyyymm::$(/bin/date -u "+%Y%m")"
+      - uses: actions/cache@v2
+        id: cache-cargo-deny
+        with:
+          path: ~/.cargo/bin/cargo-deny
+          key: ${{ runner.os }}-cargo-deny-${{ steps.cache-key.outputs.yyyymm }}
+      - name: Setup
+        if: steps.cache-cargo-deny.outputs.cache-hit != 'true'
+        run: cargo deny --version || cargo install cargo-deny --locked
+      - uses: actions-rs/cargo@v1
+        with:
+          command: deny
+          args: check --hide-inclusion-graph --show-stats
+  test:
+    name: Tests / Build & Test
+    needs: [ rustfmt ]
+    runs-on: ${{ matrix.os }}
+    environment: run-tests
+    strategy:
+      matrix:
+        rust: [ stable ]
+        # TODO macos-latest
+        os: [ ubuntu-latest, windows-latest ]
+      fail-fast: true
+      max-parallel: 2
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+      # Workaround to resolve link error with C:\msys64\mingw64\bin\libclang.dll
+      - name: Remove msys64
+        if: runner.os == 'Windows'
+        run: rm -rf /c/msys64
+      - name: Install Dependencies
+        if: runner.os == 'Windows'
+        run: choco install llvm -y
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --verbose --all
+      - uses: actions-rs/cargo@v1
+        if: runner.os == 'Linux'
+        with:
+          command: test
+          args: --verbose --all
+      - name: Build Examples
+        run: |
+          cd crashpad-examples
+          mv ../target ./
+          export RUSTFLAGS="-C link-args=-Wl,--build-id"
+          cargo build
+      - name: Run Examples
+        if: runner.os == 'Windows'
+        env:
+          MINIDUMP_UPLOAD_URL: ${{ secrets.MINIDUMP_UPLOAD_URL }}
+          OS_TYPE: ${{ runner.os }}
+        run: |
+          cd crashpad-examples
+          bin_path="target/debug/crashpad-examples"
+          if [ "${OS_TYPE}" == "Windows" ]; then
+            bin_path="${bin_path}.exe"
+          fi
+          "${bin_path}" || true
+  success:
+    name: Success
+    if: ${{ success() }}
+    needs: [ clippy, cargo-deny, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Succeed
+        run: exit 0
