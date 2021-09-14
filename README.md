@@ -1,6 +1,10 @@
 # Rust Crashpad
 
-Rust wrapper for [Crashpad].
+[![License]](#license)
+
+Rust wrapper for [Crashpad] and low-level bindings to its C++ API.
+
+[License]: https://img.shields.io/github/license/yangby-cryptape/rust-crashpad
 
 ## License
 

@@ -1,0 +1,3 @@
+[submodule "crashpad-sys/crashpad"]
+	path = crashpad-sys/crashpad
+	url = https://github.com/yangby-cryptape/crashpad

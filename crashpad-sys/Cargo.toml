@@ -1,0 +1,24 @@
+[package]
+name = "crashpad-sys"
+version = "0.1.0-alpha.0"
+authors = ["Boyu Yang <yangby@cryptape.com>"]
+edition = "2018"
+description = "Native bindings to Crashpad."
+homepage = "https://github.com/yangby-cryptape/rust-crashpad"
+repository = "https://github.com/yangby-cryptape/rust-crashpad"
+keywords = ["bindings", "ffi", "crashpad"]
+categories = ["api-bindings", "external-ffi-bindings"]
+license = "Apache-2.0"
+readme = "README.md"
+include = ["src/**/*.rs", "build.rs", "README.md",  "LICENSE", "crashpad", "wrapper"]
+
+[dependencies]
+libc = "0.2.101"
+
+[build-dependencies]
+bindgen = "0.59.1"
+cc = "1.0.70"
+cmake = "0.1.45"
+
+[features]
+with-precompiled = []
