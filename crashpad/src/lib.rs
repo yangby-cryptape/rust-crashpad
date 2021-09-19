@@ -79,6 +79,9 @@ pub fn start_crashpad(
             .or_else(|err| {
                 if let Some(data) = crashpad_sys::precompiled_handler() {
                     let bin_file = data_dir.join(handler_name);
+                    if bin_file.exists() {
+                        return Ok(bin_file);
+                    }
                     OpenOptions::new()
                         .write(true)
                         .create_new(true)
