@@ -159,3 +159,14 @@ pub fn start_crashpad(
 
     Ok(status)
 }
+
+/// Creates a dump through sending a signal `SIGQUIT` to it when panics happened.
+#[cfg(target_os = "linux")]
+pub fn dump_if_panicked() {
+    use std::panic;
+    let default_panic = panic::take_hook();
+    panic::set_hook(Box::new(move |panic_info| {
+        default_panic(panic_info);
+        unsafe { libc::raise(libc::SIGQUIT) };
+    }));
+}
