@@ -1,0 +1,16 @@
+[package]
+name = "crashpad-example-various-crashes"
+version = "0.1.1"
+authors = ["Boyu Yang <yangby@cryptape.com>"]
+edition = "2018"
+description = "An example of Crashpad with different kinds of crashes."
+homepage = "https://github.com/yangby-cryptape/rust-crashpad"
+repository = "https://github.com/yangby-cryptape/rust-crashpad"
+
+[dependencies]
+crashpad = { version = "0.1.1", path = "../../crashpad", features = ["with-precompiled"] }
+libc = "0.2.101"
+
+[build-dependencies]
+bindgen = "0.59.1"
+cc = "1.0.70"

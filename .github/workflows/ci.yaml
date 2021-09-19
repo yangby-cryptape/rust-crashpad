@@ -72,7 +72,7 @@ jobs:
           command: deny
           args: check --hide-inclusion-graph --show-stats
   test:
-    name: Tests / Build & Test
+    name: Tests / Build with Examples
     needs: [ rustfmt ]
     runs-on: ${{ matrix.os }}
     environment: run-tests
@@ -110,17 +110,17 @@ jobs:
           args: --verbose --all
       - name: Build Examples
         run: |
-          cd crashpad-examples
+          cd examples
           mv ../target ./
           export RUSTFLAGS="-C link-args=-Wl,--build-id"
           cargo build --locked
-      - name: Run Examples
+      - name: Run the Minimal Example
         env:
           MINIDUMP_UPLOAD_URL: ${{ secrets.MINIDUMP_UPLOAD_URL }}
           OS_TYPE: ${{ runner.os }}
         run: |
-          cd crashpad-examples
-          bin_path="target/debug/crashpad-examples"
+          cd examples
+          bin_path="target/debug/crashpad-example-minimal"
           if [ "${OS_TYPE}" == "Windows" ]; then
             bin_path="${bin_path}.exe"
           fi

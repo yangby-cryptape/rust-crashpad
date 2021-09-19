@@ -1,14 +1,11 @@
 [package]
-name = "crashpad-examples"
+name = "crashpad-example-minimal"
 version = "0.1.1"
 authors = ["Boyu Yang <yangby@cryptape.com>"]
 edition = "2018"
-description = "Examples of Crashpad."
+description = "The minimal example of Crashpad."
 homepage = "https://github.com/yangby-cryptape/rust-crashpad"
 repository = "https://github.com/yangby-cryptape/rust-crashpad"
 
 [dependencies]
-crashpad = { version = "0.1.1", path = "../crashpad", features = ["with-precompiled"] }
-
-[workspace]
-members = ["."]
+crashpad = { version = "0.1.1", path = "../../crashpad", features = ["with-precompiled"] }

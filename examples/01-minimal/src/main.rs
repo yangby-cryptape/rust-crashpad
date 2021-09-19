@@ -20,6 +20,6 @@ fn main() {
     #[allow(deref_nullptr)]
     #[allow(clippy::zero_ptr)]
     unsafe {
-        *(0 as *mut u32) = 100;
+        *(0 as *mut u32) = 0xDEAD;
     }
 }
