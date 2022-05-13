@@ -1,6 +1,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <assert.h>
 
 #include "client/crashpad_client.h"
 #include "client/settings.h"
@@ -31,7 +32,9 @@ std::wstring s2ws(char* str)
 extern "C" {
     bool start_crashpad(char* raw_handler,
                         char* raw_datadir,
-                        char* raw_url) {
+                        char* raw_url,
+                        char* raw_annotations[],
+                        int n_annotations) {
         // Path to the out-of-process handler executable.
         // StartCrashpadInProcessHandler() is only defined on iOS.
         base::FilePath handler(_convert(raw_handler));
@@ -43,6 +46,12 @@ extern "C" {
         std::map<std::string, std::string> annotations;
         // Optional arguments to pass to the handler.
         std::vector<std::string> arguments;
+
+        // annotations are always in (key, value) pairs
+        assert (n_annotations % 2 == 0);
+        for (int i = 0; i < n_annotations; i += 2) {
+            annotations[raw_annotations[i]] = raw_annotations[i+1];
+        }
 
         std::unique_ptr<CrashReportDatabase> db = CrashReportDatabase::Initialize(database);
 

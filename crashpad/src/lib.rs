@@ -1,4 +1,4 @@
-use std::{fs::OpenOptions, io::Write as _, path::PathBuf, process};
+use std::{collections::HashMap, fs::OpenOptions, io::Write as _, path::PathBuf, process};
 
 pub mod error;
 
@@ -31,12 +31,14 @@ where
 ///   If this parameter is not provided, the function will create a temporary directory instead of.
 /// - `url`: The URL of an upload server.
 ///   The handler will be started with this URL as its `--url` argument.
+/// - `annotations`: optional annotations passed via `--annotations` to the handler.
 ///
 /// Returns: true on success, false on failure.
-pub fn start_crashpad(
+pub fn start_crashpad<T: AsRef<str>>(
     handler_opt: Option<PathBuf>,
     data_dir_opt: Option<PathBuf>,
     url: &str,
+    annotations: Option<HashMap<&str, T>>,
 ) -> Result<bool> {
     let data_dir = if let Some(data_dir) = data_dir_opt {
         data_dir
@@ -148,11 +150,26 @@ pub fn start_crashpad(
         let mut handler = convert_to_c_chars(handler.display());
         let mut data_dir = convert_to_c_chars(data_dir.display());
         let mut url = convert_to_c_chars(url);
+
+        let mut annotations_vec = vec![];
+        if let Some(annotations) = annotations {
+            for (k, v) in annotations {
+                annotations_vec.push(convert_to_c_chars(k));
+                annotations_vec.push(convert_to_c_chars(v.as_ref()));
+            }
+        }
+        let mut c_annotations = annotations_vec
+            .iter_mut()
+            .map(|v| v.as_mut_ptr())
+            .collect::<Vec<_>>();
+
         unsafe {
             crashpad_sys::start_crashpad(
                 handler.as_mut_ptr(),
                 data_dir.as_mut_ptr(),
                 url.as_mut_ptr(),
+                c_annotations.as_mut_ptr(),
+                c_annotations.len() as i32,
             )
         }
     };
